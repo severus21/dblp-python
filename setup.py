@@ -1,4 +1,5 @@
-from setuptools import setup
+from distutils.core import setup
+import os
 
 def readme():
     with open('README.rst') as f:
@@ -19,5 +20,6 @@ setup(name='dblp-python',
       packages=['dblp'],
       install_requires=[
                       'requests>=1.0.4',
+                      'lxml>=4.1.1',
                   ]
      )

@@ -18,7 +18,7 @@ class LazyAPIData(object):
             if self.data is None:
                 self.load_data()
             return self.data[key]
-        raise AttributeError, key
+        raise (AttributeError, key)
 
     def load_data(self):
         pass
@@ -45,7 +45,7 @@ class Author(LazyAPIData):
         # TODO error handling
         xml = resp.content
         self.xml = xml
-        root = etree.fromstring(xml)
+        root = etree.XML(xml)
         data = {
             'name':root.attrib['name'],
             'publications':[Publication(k) for k in 
@@ -107,7 +107,7 @@ class Publication(LazyAPIData):
         resp = requests.get(DBLP_PUBLICATION_URL.format(key=self.key))
         xml = resp.content
         self.xml = xml
-        root = etree.fromstring(xml)
+        root = etree.XML(xml)
         publication = first_or_none(root.xpath('/dblp/*[1]'))
         if publication is None:
             raise ValueError
@@ -142,6 +142,10 @@ class Publication(LazyAPIData):
 
 def search(author_str):
     resp = requests.get(DBLP_AUTHOR_SEARCH_URL, params={'xauthor':author_str})
-    #TODO error handling
-    root = etree.fromstring(resp.content)
-    return [Author(urlpt) for urlpt in root.xpath('/authors/author/@urlpt')]
+
+    try
+        root = etree.XML(resp.content)
+    except etree.XMLSyntaxError as : 
+       log = e.error_log.filter_from_level(etree.ErrorLevels.FATAL)
+       print(log)
+    return [Authorexcep (urlpt) for urlpt in root.xpath('/authors/author/@urlpt')]
